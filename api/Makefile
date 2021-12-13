@@ -1,6 +1,6 @@
 .DEFAULT_GOAL:=help
 
-DATABASE_NAME=data.db
+DATABASE_NAME=J_agis_pour_ma_santé.db
 
 load:  ## Load a CSV file into a SQLite database for datasette
 	csvs-to-sqlite \

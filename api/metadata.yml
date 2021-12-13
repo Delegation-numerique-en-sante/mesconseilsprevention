@@ -2,11 +2,15 @@ title: Un exemple avec les données Santé.fr
 description_html: |-
   <p>On essaye d’exposer les données d’un CSV pour réutilisation externe avec cette API.</p>
 databases:
-  data:
+  J_agis_pour_ma_santé:
     plugins:
       datasette-mask-columns:
         Thématiques: ["Auteur"]
     tables:
+      Auteurs:
+        hidden: true
+      Statuts:
+        hidden: true
       Thématiques:
         facets: ["Statut", "Auteur courrier"]
         # Not recognized yet, see https://github.com/simonw/datasette/issues/1552
