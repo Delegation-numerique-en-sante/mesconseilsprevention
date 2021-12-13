@@ -46,10 +46,10 @@
             let articles = ''
             for (const row of json.rows) {
               articles += `
-              <article data-controller="article-loader">
+              <article data-controller="toggle">
                 <h2>
                   <a href=""
-                    data-action="article-loader#load"
+                    data-action="toggle#open"
                     >${row.Titre}</a
                   >
                 </h2>
@@ -63,20 +63,20 @@
                 </p>
                 <nav>${this.#extractTags(row)}</nav>
                 <p>${row.Chapô}</p>
-                <div data-article-loader-target="content" hidden>
+                <div data-toggle-target="expand" hidden>
                   <hr>
                   ${row.Corps}
                 </div>
                 <nav>
                   <a href=""
-                    data-action="article-loader#load"
-                    data-article-loader-target="more"
+                    data-action="toggle#open"
+                    data-toggle-target="collapse"
                     >En savoir plus →</a
                   >
                   <a href=""
                     hidden
-                    data-action="article-loader#unload"
-                    data-article-loader-target="collapse"
+                    data-action="toggle#close"
+                    data-toggle-target="expand"
                     >Replier ↑</a
                   >
               </article>
@@ -87,21 +87,29 @@
       }
     })
 
-    Stimulus.register("article-loader", class extends Controller {
-      static targets = [ "content", "more", "collapse" ]
+    Stimulus.register("toggle", class extends Controller {
+      static targets = [ "expand", "collapse" ]
 
-      load(event) {
+      open(event) {
         event.preventDefault()
-        this.contentTarget.removeAttribute('hidden')
-        this.moreTarget.setAttribute('hidden', '')
-        this.collapseTarget.removeAttribute('hidden')
+        for (const toShow of this.expandTargets) {
+          toShow.removeAttribute('hidden')
+        }
+
+        for (const toHide of this.collapseTargets) {
+          toHide.setAttribute('hidden', '')
+        }
       }
 
-      unload(event) {
+      close(event) {
         event.preventDefault()
-        this.contentTarget.setAttribute('hidden', '')
-        this.moreTarget.removeAttribute('hidden')
-        this.collapseTarget.setAttribute('hidden', '')
+        for (const toHide of this.expandTargets) {
+          toHide.setAttribute('hidden', '')
+        }
+
+        for (const toShow of this.collapseTargets) {
+          toShow.removeAttribute('hidden')
+        }
       }
     })
   </script>
