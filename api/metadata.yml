@@ -1,0 +1,16 @@
+title: Un exemple avec les données Santé.fr
+description_html: |-
+  <p>On essaye d’exposer les données d’un CSV pour réutilisation externe avec cette API.</p>
+databases:
+  data:
+    plugins:
+      datasette-mask-columns:
+        Thématiques: ["Auteur"]
+    tables:
+      Thématiques:
+        facets: ["Statut", "Auteur courrier"]
+        # Not recognized yet, see https://github.com/simonw/datasette/issues/1552
+        facets_array: ["Centres d'intérêt santé"]
+        plugins:
+          datasette-render-html:
+            columns: ["Chapô", "Corps"]
