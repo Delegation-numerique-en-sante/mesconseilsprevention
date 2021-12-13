@@ -83,6 +83,10 @@
               `
             }
             this.articlesTarget.innerHTML = articles
+          }).catch(exception => {
+            console.group(`Error retrieving or loading ${this.urlValue}`)
+            console.debug(exception)
+            console.groupEnd()
           })
       }
     })
@@ -121,7 +125,12 @@
   <main>
     <div data-controller="list-loader"
       data-list-loader-url-value="http://127.0.0.1:8001/J_agis_pour_ma_santé/Th%C3%A9matiques.json?_labels=on">
-      <div data-list-loader-target="articles"></div>
+      <div data-list-loader-target="articles">
+        <br>
+        <br>
+        <p>Les données sont en cours de chargement…</p>
+        <br>
+      </div>
     </div>
   </main>
   <footer>
