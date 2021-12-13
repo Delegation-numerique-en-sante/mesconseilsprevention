@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Un exemple avec les données Santé.fr</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <link rel="stylesheet" href="simple.css">
+  <style type="text/css">
+    /* Required to fight against display: inline-block. */
+    nav a[hidden] {
+      display: none;
+    }
+  </style>
+  <script type="module">
+    import { Application, Controller } from "./stimulus.js"
+    window.Stimulus = Application.start()
+    window.Stimulus.debug = true
+
+    Stimulus.register("list-loader", class extends Controller {
+      static targets = [ "articles" ]
+      static values = { url: String }
+
+      connect() {
+        this.load()
+      }
+
+      #extractTags(row) {
+        const ageRanges = row["Centres d'intérêt santé"].replaceAll('\"', '').slice(1,-1).split(',')
+        let ages = ''
+        for (const ageRange of ageRanges) {
+          ages += `<button>${ageRange}</button> `
+        }
+        return ages
+      }
+
+      #formatDate(row) {
+        const majDate = new Date(row["Date de modification"])
+        return `<time>${majDate.toLocaleDateString()}</time>`
+      }
+
+      load() {
+        fetch(this.urlValue)
+          .then(response => response.json())
+          .then(json => {
+            let articles = ''
+            for (const row of json.rows) {
+              articles += `
+              <article data-controller="article-loader">
+                <h2>
+                  <a href=""
+                    data-action="article-loader#load"
+                    >${row.Titre}</a
+                  >
+                </h2>
+                <p>
+                  <em>
+                    <small>
+                      Mise à jour le : ${this.#formatDate(row)},
+                      source : ${row.Source}
+                    </small>
+                  </em>
+                </p>
+                <nav>${this.#extractTags(row)}</nav>
+                <p>${row.Chapô}</p>
+                <div data-article-loader-target="content" hidden>
+                  <hr>
+                  ${row.Corps}
+                </div>
+                <nav>
+                  <a href=""
+                    data-action="article-loader#load"
+                    data-article-loader-target="more"
+                    >En savoir plus →</a
+                  >
+                  <a href=""
+                    hidden
+                    data-action="article-loader#unload"
+                    data-article-loader-target="collapse"
+                    >Replier ↑</a
+                  >
+              </article>
+              `
+            }
+            this.articlesTarget.innerHTML = articles
+          })
+      }
+    })
+
+    Stimulus.register("article-loader", class extends Controller {
+      static targets = [ "content", "more", "collapse" ]
+
+      load(event) {
+        event.preventDefault()
+        this.contentTarget.removeAttribute('hidden')
+        this.moreTarget.setAttribute('hidden', '')
+        this.collapseTarget.removeAttribute('hidden')
+      }
+
+      unload(event) {
+        event.preventDefault()
+        this.contentTarget.setAttribute('hidden', '')
+        this.moreTarget.removeAttribute('hidden')
+        this.collapseTarget.setAttribute('hidden', '')
+      }
+    })
+  </script>
+</head>
+<body>
+  <header>
+    <h1>Un exemple avec les données Santé.fr</h1>
+  </header>
+  <main>
+    <div data-controller="list-loader"
+      data-list-loader-url-value="http://127.0.0.1:8001/data/Th%C3%A9matiques.json?_labels=on">
+      <div data-list-loader-target="articles"></div>
+    </div>
+  </main>
+  <footer>
+    <p>Données issues du Service Public d’Information en Santé.</p>
+  </footer>
+</body>
+</html>
