@@ -1,159 +1,175 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
-<head>
-  <meta charset="utf-8">
-  <title>Un exemple avec les données Santé.fr</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-  <link rel="stylesheet" href="simple.css">
-  <style type="text/css">
-    /* Required to fight against display: inline-block. */
-    nav a[hidden] {
-      display: none;
-    }
-  </style>
-  <script type="module">
-    import { Application, Controller } from "./stimulus.js"
-    window.Stimulus = Application.start()
-    window.Stimulus.debug = true
-
-    function interpolate (str, params) {
-      // Source: https://gomakethings.com/html-templates-with-vanilla-javascript/#a-hybrid-approach
-      let names = Object.keys(params)
-      let vals = Object.values(params)
-      return new Function(...names, `return \`${str}\`;`)(...vals)
-    }
-
-    Stimulus.register("list-loader", class extends Controller {
-      static targets = [ "articles", "template" ]
-      static values = { url: String }
-
-      connect() {
-        this.load()
-      }
-
-      #extractTags(data) {
-        const ageRanges = data["Centres d'intérêt santé"].replaceAll('\"', '').slice(1,-1).split(',')
-        let ages = ''
-        for (const ageRange of ageRanges) {
-          ages += `<button>${ageRange}</button> `
-        }
-        return ages
-      }
-
-      #formatDate(data) {
-        const majDate = new Date(data["Date de modification"])
-        return `<time>${majDate.toLocaleDateString()}</time>`
-      }
-
-      #buildArticle(templateContent, data) {
-        return interpolate(templateContent, {
-          title: data.Titre,
-          summary: data.Chapô,
-          date: this.#formatDate(data),
-          source: data.Source,
-          body: data.Corps,
-          tags: this.#extractTags(data),
-        })
-      }
-
-      load() {
-        fetch(this.urlValue)
-          .then(response => response.json())
-          .then(json => {
-            let articles = ''
-            for (const row of json.rows) {
-              articles += this.#buildArticle(this.templateTarget.innerHTML, row)
+    <head>
+        <meta charset="utf-8" />
+        <title>Un exemple avec les données Santé.fr</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+        <link rel="stylesheet" href="simple.css" />
+        <style type="text/css">
+            /* Required to fight against display: inline-block. */
+            nav a[hidden] {
+                display: none;
             }
-            this.articlesTarget.innerHTML = articles
-          }).catch(exception => {
-            console.group(`Error retrieving or loading ${this.urlValue}`)
-            console.debug(exception)
-            console.groupEnd()
-          })
-      }
-    })
+        </style>
+        <script type="module">
+            import { Application, Controller } from './stimulus.js'
+            window.Stimulus = Application.start()
+            window.Stimulus.debug = true
 
-    Stimulus.register("toggle", class extends Controller {
-      static targets = [ "expand", "collapse" ]
+            function interpolate(str, params) {
+                // Source: https://gomakethings.com/html-templates-with-vanilla-javascript/#a-hybrid-approach
+                let names = Object.keys(params)
+                let vals = Object.values(params)
+                return new Function(...names, `return \`${str}\`;`)(...vals)
+            }
 
-      open(event) {
-        event.preventDefault()
-        for (const toShow of this.expandTargets) {
-          toShow.removeAttribute('hidden')
-        }
+            Stimulus.register(
+                'list-loader',
+                class extends Controller {
+                    static targets = ['articles', 'template']
+                    static values = { url: String }
 
-        for (const toHide of this.collapseTargets) {
-          toHide.setAttribute('hidden', '')
-        }
-      }
+                    connect() {
+                        this.load()
+                    }
 
-      close(event) {
-        event.preventDefault()
-        for (const toHide of this.expandTargets) {
-          toHide.setAttribute('hidden', '')
-        }
+                    #extractTags(data) {
+                        const ageRanges = data["Centres d'intérêt santé"]
+                            .replaceAll('"', '')
+                            .slice(1, -1)
+                            .split(',')
+                        let ages = ''
+                        for (const ageRange of ageRanges) {
+                            ages += `<button>${ageRange}</button> `
+                        }
+                        return ages
+                    }
 
-        for (const toShow of this.collapseTargets) {
-          toShow.removeAttribute('hidden')
-        }
-      }
-    })
-  </script>
-</head>
-<body>
-  <header>
-    <h1>Un exemple avec les données Santé.fr</h1>
-  </header>
-  <main>
-    <div data-controller="list-loader"
-      data-list-loader-url-value="http://127.0.0.1:8001/J_agis_pour_ma_santé/Th%C3%A9matiques.json?_labels=on">
-      <div data-list-loader-target="articles">
-        <br>
-        <br>
-        <p>Les données sont en cours de chargement…</p>
-        <br>
-      </div>
-      <template data-list-loader-target="template">
-        <article data-controller="toggle">
-          <h2>
-            <a href=""
-              data-action="toggle#open"
-              >${title}</a
+                    #formatDate(data) {
+                        const majDate = new Date(data['Date de modification'])
+                        return `<time>${majDate.toLocaleDateString()}</time>`
+                    }
+
+                    #buildArticle(templateContent, data) {
+                        return interpolate(templateContent, {
+                            title: data.Titre,
+                            summary: data.Chapô,
+                            date: this.#formatDate(data),
+                            source: data.Source,
+                            body: data.Corps,
+                            tags: this.#extractTags(data),
+                        })
+                    }
+
+                    load() {
+                        fetch(this.urlValue)
+                            .then((response) => response.json())
+                            .then((json) => {
+                                let articles = ''
+                                for (const row of json.rows) {
+                                    articles += this.#buildArticle(
+                                        this.templateTarget.innerHTML,
+                                        row
+                                    )
+                                }
+                                this.articlesTarget.innerHTML = articles
+                            })
+                            .catch((exception) => {
+                                console.group(
+                                    `Error retrieving or loading ${this.urlValue}`
+                                )
+                                console.debug(exception)
+                                console.groupEnd()
+                            })
+                    }
+                }
+            )
+
+            Stimulus.register(
+                'toggle',
+                class extends Controller {
+                    static targets = ['expand', 'collapse']
+
+                    open(event) {
+                        event.preventDefault()
+                        for (const toShow of this.expandTargets) {
+                            toShow.removeAttribute('hidden')
+                        }
+
+                        for (const toHide of this.collapseTargets) {
+                            toHide.setAttribute('hidden', '')
+                        }
+                    }
+
+                    close(event) {
+                        event.preventDefault()
+                        for (const toHide of this.expandTargets) {
+                            toHide.setAttribute('hidden', '')
+                        }
+
+                        for (const toShow of this.collapseTargets) {
+                            toShow.removeAttribute('hidden')
+                        }
+                    }
+                }
+            )
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>Un exemple avec les données Santé.fr</h1>
+        </header>
+        <main>
+            <div
+                data-controller="list-loader"
+                data-list-loader-url-value="http://127.0.0.1:8001/J_agis_pour_ma_santé/Th%C3%A9matiques.json?_labels=on"
             >
-          </h2>
-          <p>
-            <em>
-              <small>
-                Mise à jour le : ${date},
-                source : ${source}
-              </small>
-            </em>
-          </p>
-          <nav>${tags}</nav>
-          <p>${summary}</p>
-          <div data-toggle-target="expand" hidden>
-            <hr>
-            ${body}
-          </div>
-          <nav>
-            <a href=""
-              data-action="toggle#open"
-              data-toggle-target="collapse"
-              >En savoir plus →</a
-            >
-            <a href=""
-              hidden
-              data-action="toggle#close"
-              data-toggle-target="expand"
-              >Replier ↑</a
-            >
-        </article>
-      </template>
-    </div>
-  </main>
-  <footer>
-    <p>Données issues du Service Public d’Information en Santé.</p>
-  </footer>
-</body>
+                <div data-list-loader-target="articles">
+                    <br />
+                    <br />
+                    <p>Les données sont en cours de chargement…</p>
+                    <br />
+                </div>
+                <template data-list-loader-target="template">
+                    <article data-controller="toggle">
+                        <h2>
+                            <a href="" data-action="toggle#open">${title}</a>
+                        </h2>
+                        <p>
+                            <em>
+                                <small>
+                                    Mise à jour le : ${date}, source : ${source}
+                                </small>
+                            </em>
+                        </p>
+                        <nav>${tags}</nav>
+                        <p>${summary}</p>
+                        <div data-toggle-target="expand" hidden>
+                            <hr />
+                            ${body}
+                        </div>
+                        <nav>
+                            <a
+                                href=""
+                                data-action="toggle#open"
+                                data-toggle-target="collapse"
+                                >En savoir plus →</a
+                            >
+                            <a
+                                href=""
+                                hidden
+                                data-action="toggle#close"
+                                data-toggle-target="expand"
+                                >Replier ↑</a
+                            >
+                        </nav>
+                    </article>
+                </template>
+            </div>
+        </main>
+        <footer>
+            <p>Données issues du Service Public d’Information en Santé.</p>
+        </footer>
+    </body>
 </html>
