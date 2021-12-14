@@ -4,7 +4,7 @@ DATABASE_NAME=J_agis_pour_ma_santé.db
 
 load:  ## Load a CSV file into a SQLite database for datasette
 	csvs-to-sqlite \
-		--table 'Thématiques' \
+		--table 'Articles' \
 		--replace-tables \
 		--primary-key 'Identifiant (ID) du nœud' \
 		--extract-column 'Statut:Statuts:name' \

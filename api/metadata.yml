@@ -5,13 +5,13 @@ databases:
   J_agis_pour_ma_santé:
     plugins:
       datasette-mask-columns:
-        Thématiques: ["Auteur"]
+        Articles: ["Auteur"]
     tables:
       Auteurs:
         hidden: true
       Statuts:
         hidden: true
-      Thématiques:
+      Articles:
         facets: ["Statut", "Auteur courrier"]
         # Not recognized yet, see https://github.com/simonw/datasette/issues/1552
         facets_array: ["Centres d'intérêt santé"]
