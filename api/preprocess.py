@@ -32,15 +32,15 @@ def transform_row(row: dict) -> dict:
     cis_list = cis_str.split("|")
     row["Centres d'intérêt santé"] = transform_list(cis_list)
     age_min, age_max = extract_ages(cis_list)
-    row["Age min"] = age_min
-    row["Age max"] = age_max
+    row["Age_min"] = age_min
+    row["Age_max"] = age_max
     return row
 
 
 def main(file_name: str) -> None:
     with open(file_name) as f:
         reader = csv.DictReader(f)
-        fieldnames = list(reader.fieldnames or []) + ["Age min", "Age max"]
+        fieldnames = list(reader.fieldnames or []) + ["Age_min", "Age_max"]
         writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames)
         writer.writeheader()
         for row in reader:

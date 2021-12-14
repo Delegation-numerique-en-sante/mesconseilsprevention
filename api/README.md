@@ -17,8 +17,10 @@
 
 ## Test
 
-1. Install dev dependencies: `pip-sync requirements.txt requirements-dev.txt`
-2. Run tests: `make test`
+1. Install Hurl: https://hurl.dev/docs/installation.html
+2. Install dev dependencies: `pip-sync requirements.txt requirements-dev.txt`
+3. Launch datasette (see Run → 3. above)
+4. Run tests: `make test`
 
 
 ## Check types

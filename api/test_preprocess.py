@@ -49,8 +49,8 @@ def test_transform_row():
             )
         }
     ) == {
-        "Age max": 55,
-        "Age min": 11,
+        "Age_max": 55,
+        "Age_min": 11,
         "Centres d'intérêt santé": (
             "["
             '"La santé des adolescents (11 à 17 ans)",'
