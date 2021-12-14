@@ -22,6 +22,15 @@ def extract_ages(data: List[str]) -> Tuple[int, int]:
     )
 
 
+def transform_row(row: dict) -> dict:
+    cis_list = row.get("Centres d'intérêt santé").split("|")
+    row["Centres d'intérêt santé"] = transform_list(cis_list)
+    age_min, age_max = extract_ages(cis_list)
+    row["Age min"] = age_min
+    row["Age max"] = age_max
+    return row
+
+
 def main(file_name: str) -> None:
     with open(file_name) as f:
         reader = csv.DictReader(f)
@@ -29,11 +38,7 @@ def main(file_name: str) -> None:
         writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames)
         writer.writeheader()
         for row in reader:
-            cis_list = row.get("Centres d'intérêt santé").split("|")
-            row["Centres d'intérêt santé"] = transform_list(cis_list)
-            age_min, age_max = extract_ages(cis_list)
-            row["Age min"] = age_min
-            row["Age max"] = age_max
+            row = transform_row(row)
             writer.writerow(row)
 
 
