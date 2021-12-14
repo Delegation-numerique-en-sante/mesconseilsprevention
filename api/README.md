@@ -9,6 +9,13 @@
 
 ## Run
 
-1. Run the database creation command: `make load csv-file=paht/to/file.csv`
-2. Run the datasette server against it: `make serve`
-3. Open http://127.0.0.1:8001
+1. Transform the source: `make preprocess csv-file=path/to/file.csv > transformed.csv`
+2. Run the database creation command: `make load csv-file=transformed.csv`
+3. Run the datasette server against it: `make serve`
+4. Open http://127.0.0.1:8001
+
+
+## Test
+
+1. Install dev dependencies: `pip-sync requirements.txt requirements-dev.txt`
+2. Run tests: `make test`
