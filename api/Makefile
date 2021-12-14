@@ -24,6 +24,9 @@ serve:  ## Run the datasette server against SQLite database
 test:  ## Run tests
 	pytest test_preprocess.py
 
+check:  ## Check source code types
+	mypy preprocess.py
+
 .PHONY: preprocess load serve test
 
 help:  ## Display this help.

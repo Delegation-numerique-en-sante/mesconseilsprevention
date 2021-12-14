@@ -3,7 +3,7 @@
 ## Install
 
 1. Create a Python virtualenv and activate it
-2. Install pip-tools: `pip install pip-tools`
+2. Install pip-tools: `python3 -m pip install pip-tools`
 3. Install dependencies: `pip-sync`
 
 
@@ -19,3 +19,9 @@
 
 1. Install dev dependencies: `pip-sync requirements.txt requirements-dev.txt`
 2. Run tests: `make test`
+
+
+## Check types
+
+1. Install dev dependencies: `pip-sync requirements.txt requirements-dev.txt`
+2. Run tests: `make check`

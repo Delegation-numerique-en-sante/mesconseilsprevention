@@ -31,6 +31,12 @@ def test_extract_ages():
     )
 
 
+def test_extract_ages_without_ages_returns_zeros():
+    from preprocess import extract_ages
+
+    assert extract_ages(["La santé des personnes âgées (85 ans et plus)"]) == (0, 0)
+
+
 def test_transform_row():
     from preprocess import transform_row
 
@@ -53,3 +59,9 @@ def test_transform_row():
             "]"
         ),
     }
+
+
+def test_transform_row_without_cis_is_noop():
+    from preprocess import transform_row
+
+    assert transform_row({"foo": "bar"}) == {"foo": "bar"}
