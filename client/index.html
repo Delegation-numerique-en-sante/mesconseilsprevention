@@ -11,6 +11,12 @@
             nav a[hidden] {
                 display: none;
             }
+            /* Remove the accent background color for the reset input. */
+            input[type='reset'] {
+                border: 1px solid var(--border);
+                color: var(--text) !important;
+                background: none;
+            }
         </style>
         <script type="module">
             import { Application, Controller } from './stimulus.js'
@@ -25,14 +31,10 @@
             }
 
             Stimulus.register(
-                'list-loader',
+                'articles-loader',
                 class extends Controller {
                     static targets = ['articles', 'template']
-                    static values = { url: String }
-
-                    connect() {
-                        this.load()
-                    }
+                    static values = { url: String, age: Number }
 
                     #extractTags(data) {
                         const ageRanges = data["Centres d'intérêt santé"]
@@ -62,8 +64,18 @@
                         })
                     }
 
+                    #buildURL(url, age) {
+                        const parsedURL = new URL(url)
+                        let searchParams = new URLSearchParams(parsedURL.search)
+                        searchParams.set('Age_max__gte', age)
+                        searchParams.set('Age_min__lte', age)
+                        parsedURL.search = searchParams.toString()
+                        return parsedURL
+                    }
+
                     load() {
-                        fetch(this.urlValue)
+                        const url = this.#buildURL(this.urlValue, this.ageValue)
+                        fetch(url)
                             .then((response) => response.json())
                             .then((json) => {
                                 let articles = ''
@@ -82,6 +94,26 @@
                                 console.debug(exception)
                                 console.groupEnd()
                             })
+                    }
+                }
+            )
+
+            Stimulus.register(
+                'filters',
+                class extends Controller {
+                    static targets = ['form']
+
+                    update(event) {
+                        event.preventDefault()
+                        const data = new FormData(this.formTarget)
+                        const responses = Object.fromEntries(data)
+                        this.element.dataset.articlesLoaderAgeValue = responses.age
+                        this.dispatch('updated')
+                    }
+
+                    reset(event) {
+                        this.element.removeAttribute('data-articles-loader-age-value')
+                        this.dispatch('updated')
                     }
                 }
             )
@@ -120,56 +152,59 @@
         <header>
             <h1>Un exemple avec les données Santé.fr</h1>
         </header>
-        <main>
-            <div
-                data-controller="list-loader"
-                data-list-loader-url-value="http://127.0.0.1:8001/J_agis_pour_ma_santé/Articles.json?_labels=on"
-            >
-                <div data-list-loader-target="articles">
-                    <br />
-                    <br />
-                    <p>Les données sont en cours de chargement…</p>
-                    <br />
-                </div>
-                <template data-list-loader-target="template">
-                    <article data-controller="toggle">
-                        <h2>
-                            <a href="" data-action="toggle#open">${title}</a>
-                        </h2>
-                        <p>
-                            <em>
-                                <small>
-                                    Mise à jour le : ${date}, source : ${source}
-                                </small>
-                            </em>
-                        </p>
-                        <nav>${tags}</nav>
-                        <p>${summary}</p>
-                        <div data-toggle-target="expand" hidden>
-                            <hr />
-                            ${body}
-                        </div>
-                        <nav>
-                            <a
-                                href=""
-                                data-action="toggle#open"
-                                data-toggle-target="collapse"
-                                >En savoir plus →</a
-                            >
-                            <a
-                                href=""
-                                hidden
-                                data-action="toggle#close"
-                                data-toggle-target="expand"
-                                >Replier ↑</a
-                            >
-                        </nav>
-                    </article>
-                </template>
-            </div>
+        <main
+            data-controller="articles-loader filters"
+            data-articles-loader-url-value="http://127.0.0.1:8001/J_agis_pour_ma_santé/Articles.json?_labels=on"
+            data-action="filters:updated->articles-loader#load"
+        >
+            <h2>Quelques renseignements pour personnaliser vos conseils prévention</h2>
+            <form data-filters-target="form">
+                <fieldset>
+                    <label for="age">Quel est votre âge ?</label><br />
+                    <input type="number" step="1" pattern="\d+" name="age" />
+                </fieldset>
+                <input type="submit" value="Soumettre" data-action="filters#update" />
+                <input type="reset" data-action="click->filters#reset" />
+            </form>
+            <div data-articles-loader-target="articles"></div>
+            <template data-articles-loader-target="template">
+                <article data-controller="toggle">
+                    <h3>
+                        <a href="" data-action="toggle#open">${title}</a>
+                    </h3>
+                    <p>
+                        <em>
+                            <small>
+                                Mise à jour le : ${date}, source : ${source}
+                            </small>
+                        </em>
+                    </p>
+                    <nav>${tags}</nav>
+                    <p>${summary}</p>
+                    <div data-toggle-target="expand" hidden>
+                        <hr />
+                        ${body}
+                    </div>
+                    <nav>
+                        <a
+                            href=""
+                            data-action="toggle#open"
+                            data-toggle-target="collapse"
+                            >En savoir plus →</a
+                        >
+                        <a
+                            href=""
+                            hidden
+                            data-action="toggle#close"
+                            data-toggle-target="expand"
+                            >Replier ↑</a
+                        >
+                    </nav>
+                </article>
+            </template>
         </main>
         <footer>
-            <p>Données issues du Service Public d’Information en Santé.</p>
+            <p>Données issues de <a href="https://www.sante.fr/">Santé.fr</a>.</p>
         </footer>
     </body>
 </html>
