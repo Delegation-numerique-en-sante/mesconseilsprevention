@@ -1,6 +1,6 @@
 .DEFAULT_GOAL:=help
 
-DATABASE_NAME=J_agis_pour_ma_santé.db
+DATABASE_NAME=SanteFr.db
 
 preprocess:  ## Convert the original CSV to a usable one.
 	@python preprocess.py '$(csv-file)'

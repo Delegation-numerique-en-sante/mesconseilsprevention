@@ -2,7 +2,7 @@ title: Un exemple avec les données Santé.fr
 description_html: |-
   <p>On essaye d’exposer les données d’un CSV pour réutilisation externe avec cette API.</p>
 databases:
-  J_agis_pour_ma_santé:
+  SanteFr:
     plugins:
       datasette-mask-columns:
         Articles: ["Auteur"]
