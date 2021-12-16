@@ -165,7 +165,11 @@
             <h2>Quelques renseignements pour personnaliser vos conseils prévention</h2>
             <form data-filters-target="form">
                 <fieldset>
-                    <label for="age">Quel est votre âge ?</label><br />
+                    <label for="age">
+                        Quel est votre âge ?
+                        <em><small>(Chiffre requis, par exemple : 42)</small></em>
+                    </label>
+                    <br />
                     <input type="number" step="1" pattern="\d+" name="age" />
                 </fieldset>
                 <input type="submit" value="Soumettre" data-action="filters#update" />
