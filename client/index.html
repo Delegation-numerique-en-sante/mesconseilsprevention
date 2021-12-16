@@ -61,6 +61,7 @@
                     #buildArticle(templateContent, data) {
                         return parseStringTemplate(templateContent, {
                             title: data.Titre,
+                            url: data['Canonical URL'],
                             summary: data.Chapô,
                             date: this.#formatDate(data),
                             source: data.Source,
@@ -122,35 +123,6 @@
                     }
                 }
             )
-
-            Stimulus.register(
-                'toggle',
-                class extends Controller {
-                    static targets = ['expand', 'collapse']
-
-                    open(event) {
-                        event.preventDefault()
-                        for (const toShow of this.expandTargets) {
-                            toShow.removeAttribute('hidden')
-                        }
-
-                        for (const toHide of this.collapseTargets) {
-                            toHide.setAttribute('hidden', '')
-                        }
-                    }
-
-                    close(event) {
-                        event.preventDefault()
-                        for (const toHide of this.expandTargets) {
-                            toHide.setAttribute('hidden', '')
-                        }
-
-                        for (const toShow of this.collapseTargets) {
-                            toShow.removeAttribute('hidden')
-                        }
-                    }
-                }
-            )
         </script>
     </head>
     <body>
@@ -177,9 +149,9 @@
             </form>
             <div data-articles-loader-target="articles"></div>
             <template data-articles-loader-target="template">
-                <article data-controller="toggle">
+                <article>
                     <h3>
-                        <a href="" data-action="toggle#open">${title}</a>
+                        <a href="${url}">${title}</a>
                     </h3>
                     <p>
                         <em>
@@ -190,24 +162,8 @@
                     </p>
                     <nav>${tags}</nav>
                     <p>${summary}</p>
-                    <div data-toggle-target="expand" hidden>
-                        <hr />
-                        ${body}
-                    </div>
                     <nav>
-                        <a
-                            href=""
-                            data-action="toggle#open"
-                            data-toggle-target="collapse"
-                            >En savoir plus →</a
-                        >
-                        <a
-                            href=""
-                            hidden
-                            data-action="toggle#close"
-                            data-toggle-target="expand"
-                            >Replier ↑</a
-                        >
+                        <a href="${url}">Voir l’article sur santé.fr →</a>
                     </nav>
                 </article>
             </template>
