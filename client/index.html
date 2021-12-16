@@ -23,11 +23,16 @@
             window.Stimulus = Application.start()
             window.Stimulus.debug = true
 
-            function interpolate(str, params) {
-                // Source: https://gomakethings.com/html-templates-with-vanilla-javascript/#a-hybrid-approach
-                let names = Object.keys(params)
-                let vals = Object.values(params)
-                return new Function(...names, `return \`${str}\`;`)(...vals)
+            function parseStringTemplate(str, obj) {
+                // Source: https://stackoverflow.com/a/59084440
+                const parts = str.split(/\$\{(?!\d)[\w]*\}/)
+                const args = str.match(/[^{\}]+(?=})/g) || []
+                const parameters = args.map(
+                    (argument) =>
+                        obj[argument] ||
+                        (obj[argument] === undefined ? '' : obj[argument])
+                )
+                return String.raw({ raw: parts }, ...parameters)
             }
 
             Stimulus.register(
@@ -54,7 +59,7 @@
                     }
 
                     #buildArticle(templateContent, data) {
-                        return interpolate(templateContent, {
+                        return parseStringTemplate(templateContent, {
                             title: data.Titre,
                             summary: data.Chapô,
                             date: this.#formatDate(data),
