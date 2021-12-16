@@ -4,6 +4,17 @@ import sys
 from typing import List, Tuple
 
 
+def rewrite_canonical_url(row: dict) -> dict:
+    canonical_url = row.get("Canonical URL")
+    if canonical_url is None:
+        return row
+
+    row["Canonical URL"] = canonical_url.replace(
+        "santefr.production.asipsante.fr", "www.sante.fr"
+    )
+    return row
+
+
 def transform_list(data: List[str]) -> str:
     return "[" + ",".join(f'"{cis}"' for cis in data) + "]"
 
@@ -26,6 +37,7 @@ def extract_ages(data: List[str]) -> Tuple[int, int]:
 
 
 def transform_row(row: dict) -> dict:
+    row = rewrite_canonical_url(row)
     cis_str = row.get("Centres d'intérêt santé")
     if cis_str is None:
         return row

@@ -31,6 +31,20 @@ def test_extract_ages():
     )
 
 
+def test_rewrite_canonical_url():
+    from preprocess import rewrite_canonical_url
+
+    assert rewrite_canonical_url(
+        {"Canonical URL": "https://santefr.production.asipsante.fr/endometriose-1"}
+    ) == {"Canonical URL": "https://www.sante.fr/endometriose-1"}
+
+
+def test_rewrite_canonical_url_without_key_is_noop():
+    from preprocess import rewrite_canonical_url
+
+    assert rewrite_canonical_url({"foo": "bar"}) == {"foo": "bar"}
+
+
 def test_extract_ages_without_ages_returns_zeros():
     from preprocess import extract_ages
 
@@ -46,7 +60,8 @@ def test_transform_row():
                 "La santé des adolescents (11 à 17 ans)|"
                 "La santé des jeunes adultes (18 à 35 ans)|"
                 "La santé des adultes (35 à 55 ans)"
-            )
+            ),
+            "Canonical URL": "https://santefr.production.asipsante.fr/endometriose-1",
         }
     ) == {
         "Age_max": 55,
@@ -58,10 +73,11 @@ def test_transform_row():
             '"La santé des adultes (35 à 55 ans)"'
             "]"
         ),
+        "Canonical URL": "https://www.sante.fr/endometriose-1",
     }
 
 
-def test_transform_row_without_cis_is_noop():
+def test_transform_row_without_keys_is_noop():
     from preprocess import transform_row
 
     assert transform_row({"foo": "bar"}) == {"foo": "bar"}
