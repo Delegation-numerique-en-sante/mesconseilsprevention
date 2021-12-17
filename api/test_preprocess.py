@@ -62,7 +62,8 @@ def test_transform_row():
                 "La santé des adultes (35 à 55 ans)"
             ),
             "Canonical URL": "https://santefr.production.asipsante.fr/endometriose-1",
-        }
+        },
+        [],
     ) == {
         "Age_max": 55,
         "Age_min": 11,
@@ -77,7 +78,33 @@ def test_transform_row():
     }
 
 
+def test_transform_row_with_removed_columns():
+    from preprocess import transform_row
+
+    assert transform_row(
+        {
+            "Centres d'intérêt santé": (
+                "La santé des adolescents (11 à 17 ans)|"
+                "La santé des jeunes adultes (18 à 35 ans)|"
+                "La santé des adultes (35 à 55 ans)"
+            ),
+            "Canonical URL": "https://santefr.production.asipsante.fr/endometriose-1",
+        },
+        ["Canonical URL"],
+    ) == {
+        "Age_max": 55,
+        "Age_min": 11,
+        "Centres d'intérêt santé": (
+            "["
+            '"La santé des adolescents (11 à 17 ans)",'
+            '"La santé des jeunes adultes (18 à 35 ans)",'
+            '"La santé des adultes (35 à 55 ans)"'
+            "]"
+        ),
+    }
+
+
 def test_transform_row_without_keys_is_noop():
     from preprocess import transform_row
 
-    assert transform_row({"foo": "bar"}) == {"foo": "bar"}
+    assert transform_row({"foo": "bar"}, []) == {"foo": "bar"}

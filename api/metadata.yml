@@ -5,16 +5,16 @@ databases:
   SanteFr:
     plugins:
       datasette-mask-columns:
-        Articles: ["Auteur"]
+        Articles: ["Corps"]
     tables:
       Auteurs:
         hidden: true
       Statuts:
         hidden: true
       Articles:
-        facets: ["Statut", "Auteur courrier"]
+        facets: ["Statut"]
         # Not recognized yet, see https://github.com/simonw/datasette/issues/1552
         facets_array: ["Centres d'intérêt santé"]
         plugins:
           datasette-render-html:
-            columns: ["Chapô", "Corps"]
+            columns: ["Chapô"]

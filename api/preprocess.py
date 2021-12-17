@@ -4,6 +4,12 @@ import sys
 from typing import List, Tuple
 
 
+def remove_columns(row: dict, columns_to_remove: list) -> dict:
+    for fieldname in columns_to_remove:
+        row.pop(fieldname)
+    return row
+
+
 def rewrite_canonical_url(row: dict) -> dict:
     canonical_url = row.get("Canonical URL")
     if canonical_url is None:
@@ -36,7 +42,8 @@ def extract_ages(data: List[str]) -> Tuple[int, int]:
     )
 
 
-def transform_row(row: dict) -> dict:
+def transform_row(row: dict, columns_to_remove: list) -> dict:
+    row = remove_columns(row, columns_to_remove)
     row = rewrite_canonical_url(row)
     cis_str = row.get("Centres d'intérêt santé")
     if cis_str is None:
@@ -50,13 +57,24 @@ def transform_row(row: dict) -> dict:
 
 
 def main(file_name: str) -> None:
+    columns_to_remove = [
+        "Auteur courrier",
+        "Auteur",
+        "A retrouver sur",
+        "Afficher dans le Bloc de tags associés",
+        "Fuseau horaire",
+    ]
+
     with open(file_name) as f:
         reader = csv.DictReader(f)
         fieldnames = list(reader.fieldnames or []) + ["Age_min", "Age_max"]
+        fieldnames = [
+            fieldname for fieldname in fieldnames if fieldname not in columns_to_remove
+        ]
         writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames)
         writer.writeheader()
         for row in reader:
-            row = transform_row(row)
+            row = transform_row(row, columns_to_remove)
             writer.writerow(row)
 
 

@@ -12,7 +12,6 @@ load:  ## Load a CSV file into a SQLite database for datasette
 		--replace-tables \
 		--primary-key 'Identifiant (ID) du nœud' \
 		--extract-column 'Statut:Statuts:name' \
-		--extract-column 'Auteur courrier:Auteurs:email' \
 		--datetime 'Date de modification' \
 		--datetime 'Date de mise à jour' \
 		--datetime-format '%d/%m/%Y %H:%M:%S' \
