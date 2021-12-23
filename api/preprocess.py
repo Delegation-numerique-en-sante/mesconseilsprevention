@@ -39,14 +39,12 @@ def transform_row(row: dict, columns_to_remove: list) -> dict:
     row = remove_columns(row, columns_to_remove)
     if "Canonical URL" in row:
         row["Canonical URL"] = rewrite_canonical_url(row.get("Canonical URL", ""))
-    cis_str = row.get("Centres d'intérêt santé")
-    if cis_str is None:
-        return row
-    cis_list = cis_str.split("|")
-    row["Centres d'intérêt santé"] = transform_list(cis_list)
-    age_min, age_max = extract_ages(cis_list)
-    row["Age_min"] = age_min
-    row["Age_max"] = age_max
+    if "Centres d'intérêt santé" in row:
+        cis_list = row["Centres d'intérêt santé"].split("|")
+        row["Centres d'intérêt santé"] = transform_list(cis_list)
+        age_min, age_max = extract_ages(cis_list)
+        row["Age_min"] = age_min
+        row["Age_max"] = age_max
     return row
 
 
