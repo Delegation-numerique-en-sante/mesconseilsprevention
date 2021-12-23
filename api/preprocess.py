@@ -1,7 +1,7 @@
 import csv
 import re
 import sys
-from typing import List, Tuple
+from typing import List, TextIO, Tuple
 
 
 def remove_columns(row: dict, columns_to_remove: list) -> dict:
@@ -48,26 +48,32 @@ def transform_row(row: dict, columns_to_remove: list) -> dict:
     return row
 
 
-def main(file_name: str) -> None:
-    columns_to_remove = [
-        "Auteur courrier",
-        "Auteur",
-        "A retrouver sur",
-        "Afficher dans le Bloc de tags associés",
-        "Fuseau horaire",
-    ]
+COLUMNS_TO_REMOVE = [
+    "Auteur courrier",
+    "Auteur",
+    "A retrouver sur",
+    "Afficher dans le Bloc de tags associés",
+    "Fuseau horaire",
+]
 
-    with open(file_name) as f:
-        reader = csv.DictReader(f)
-        fieldnames = list(reader.fieldnames or []) + ["Age_min", "Age_max"]
-        fieldnames = [
-            fieldname for fieldname in fieldnames if fieldname not in columns_to_remove
-        ]
-        writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames, lineterminator="\n")
-        writer.writeheader()
-        for row in reader:
-            row = transform_row(row, columns_to_remove)
-            writer.writerow(row)
+
+def preprocess_csv(input_file: TextIO, output_file: TextIO) -> None:
+    reader = csv.DictReader(input_file)
+    fieldnames = list(reader.fieldnames or [])
+    fieldnames = list(reader.fieldnames or []) + ["Age_min", "Age_max"]
+    fieldnames = [
+        fieldname for fieldname in fieldnames if fieldname not in COLUMNS_TO_REMOVE
+    ]
+    writer = csv.DictWriter(output_file, fieldnames=fieldnames, lineterminator="\n")
+    writer.writeheader()
+    for row in reader:
+        row = transform_row(row, COLUMNS_TO_REMOVE)
+        writer.writerow(row)
+
+
+def main(file_name: str) -> None:
+    with open(file_name) as input_file:
+        preprocess_csv(input_file, sys.stdout)
 
 
 if __name__ == "__main__":
