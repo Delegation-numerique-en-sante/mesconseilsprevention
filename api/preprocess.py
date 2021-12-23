@@ -1,13 +1,8 @@
-import csv
 import re
 import sys
-from typing import List, TextIO, Tuple
+from typing import List, Optional, TextIO, Tuple
 
-
-def remove_columns(row: dict, columns_to_remove: list) -> dict:
-    for fieldname in columns_to_remove:
-        row.pop(fieldname)
-    return row
+import pandas
 
 
 def rewrite_canonical_url(canonical_url: str) -> str:
@@ -35,17 +30,23 @@ def extract_ages(data: List[str]) -> Tuple[int, int]:
     )
 
 
-def transform_row(row: dict, columns_to_remove: list) -> dict:
-    row = remove_columns(row, columns_to_remove)
-    if "Canonical URL" in row:
-        row["Canonical URL"] = rewrite_canonical_url(row.get("Canonical URL", ""))
-    if "Centres d'intérêt santé" in row:
-        cis_list = row["Centres d'intérêt santé"].split("|")
-        row["Centres d'intérêt santé"] = transform_list(cis_list)
-        age_min, age_max = extract_ages(cis_list)
-        row["Age_min"] = age_min
-        row["Age_max"] = age_max
-    return row
+def transform_dataframe(
+    df: pandas.DataFrame, columns_to_remove: Optional[List[str]] = None
+) -> pandas.DataFrame:
+    df = df.copy()
+
+    if columns_to_remove:
+        df = df.drop(columns_to_remove, axis=1, errors="ignore")
+
+    if "Canonical URL" in df.columns:
+        df["Canonical URL"] = df["Canonical URL"].apply(rewrite_canonical_url)
+
+    if "Centres d'intérêt santé" in df.columns:
+        cis_list = df["Centres d'intérêt santé"].str.split("|")
+        df["Centres d'intérêt santé"] = cis_list.apply(transform_list)
+        df[["Age_min", "Age_max"]] = cis_list.apply(extract_ages).apply(pandas.Series)
+
+    return df
 
 
 COLUMNS_TO_REMOVE = [
@@ -58,17 +59,11 @@ COLUMNS_TO_REMOVE = [
 
 
 def preprocess_csv(input_file: TextIO, output_file: TextIO) -> None:
-    reader = csv.DictReader(input_file)
-    fieldnames = list(reader.fieldnames or [])
-    fieldnames = list(reader.fieldnames or []) + ["Age_min", "Age_max"]
-    fieldnames = [
-        fieldname for fieldname in fieldnames if fieldname not in COLUMNS_TO_REMOVE
-    ]
-    writer = csv.DictWriter(output_file, fieldnames=fieldnames, lineterminator="\n")
-    writer.writeheader()
-    for row in reader:
-        row = transform_row(row, COLUMNS_TO_REMOVE)
-        writer.writerow(row)
+    # Hack for reading CSV with duplicate column names
+    df = pandas.read_csv(input_file, header=None)
+    df = df.rename(columns=df.iloc[0], copy=False).iloc[1:].reset_index(drop=True)
+    df = transform_dataframe(df, COLUMNS_TO_REMOVE)
+    df.to_csv(output_file, header=True, index=False)
 
 
 def main(file_name: str) -> None:
