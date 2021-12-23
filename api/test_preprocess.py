@@ -34,15 +34,10 @@ def test_extract_ages():
 def test_rewrite_canonical_url():
     from preprocess import rewrite_canonical_url
 
-    assert rewrite_canonical_url(
-        {"Canonical URL": "https://santefr.production.asipsante.fr/endometriose-1"}
-    ) == {"Canonical URL": "https://www.sante.fr/endometriose-1"}
-
-
-def test_rewrite_canonical_url_without_key_is_noop():
-    from preprocess import rewrite_canonical_url
-
-    assert rewrite_canonical_url({"foo": "bar"}) == {"foo": "bar"}
+    assert (
+        rewrite_canonical_url("https://santefr.production.asipsante.fr/endometriose-1")
+        == "https://www.sante.fr/endometriose-1"
+    )
 
 
 def test_extract_ages_without_ages_returns_zeros():

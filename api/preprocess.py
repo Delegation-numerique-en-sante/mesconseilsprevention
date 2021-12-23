@@ -10,15 +10,8 @@ def remove_columns(row: dict, columns_to_remove: list) -> dict:
     return row
 
 
-def rewrite_canonical_url(row: dict) -> dict:
-    canonical_url = row.get("Canonical URL")
-    if canonical_url is None:
-        return row
-
-    row["Canonical URL"] = canonical_url.replace(
-        "santefr.production.asipsante.fr", "www.sante.fr"
-    )
-    return row
+def rewrite_canonical_url(canonical_url: str) -> str:
+    return canonical_url.replace("santefr.production.asipsante.fr", "www.sante.fr")
 
 
 def transform_list(data: List[str]) -> str:
@@ -44,7 +37,8 @@ def extract_ages(data: List[str]) -> Tuple[int, int]:
 
 def transform_row(row: dict, columns_to_remove: list) -> dict:
     row = remove_columns(row, columns_to_remove)
-    row = rewrite_canonical_url(row)
+    if "Canonical URL" in row:
+        row["Canonical URL"] = rewrite_canonical_url(row.get("Canonical URL", ""))
     cis_str = row.get("Centres d'intérêt santé")
     if cis_str is None:
         return row
