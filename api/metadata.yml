@@ -9,12 +9,10 @@ databases:
     tables:
       Auteurs:
         hidden: true
-      Statuts:
-        hidden: true
       Articles:
-        facets: ["Statut"]
+        facets: ["Région"]
         # Not recognized yet, see https://github.com/simonw/datasette/issues/1552
-        facets_array: ["Centres d'intérêt santé"]
+        facets_array: ["Séquence de vie"]
         plugins:
           datasette-render-html:
             columns: ["Chapô"]

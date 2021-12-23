@@ -42,7 +42,7 @@
                     static values = { url: String, age: Number }
 
                     #extractTags(data) {
-                        const ageRanges = data["Centres d'intérêt santé"]
+                        const ageRanges = data["Séquence de vie"]
                             .replaceAll('"', '')
                             .slice(1, -1)
                             .split(',')
@@ -54,7 +54,7 @@
                     }
 
                     #formatDate(data) {
-                        const majDate = new Date(data['Date de mise à jour'])
+                        const majDate = new Date(data['Date de publication'])
                         return `<time>${majDate.toLocaleDateString()}</time>`
                     }
 
@@ -131,7 +131,7 @@
         </header>
         <main
             data-controller="articles-loader filters"
-            data-articles-loader-url-value="http://127.0.0.1:8001/SanteFr/Articles.json?_labels=on"
+            data-articles-loader-url-value="http://127.0.0.1:8001/SanteFr/Articles.json?_shape=objects&_labels=on"
             data-action="filters:updated->articles-loader#load"
         >
             <h2>Quelques renseignements pour personnaliser vos conseils prévention</h2>

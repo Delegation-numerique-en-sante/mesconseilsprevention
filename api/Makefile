@@ -2,18 +2,17 @@
 
 DATABASE_NAME=SanteFr.db
 
-preprocess:  ## Convert the original CSV to a usable one.
-	@python preprocess.py '$(csv-file)'
+preprocess:  ## Convert and preprocess the original Excel file to CSV.
+	@python preprocess.py '$(xlsx-file)'
 
 
 load:  ## Load a CSV file into a SQLite database for datasette
 	csvs-to-sqlite \
 		--table 'Articles' \
 		--replace-tables \
-		--primary-key 'Identifiant (ID) du nœud' \
-		--extract-column 'Statut:Statuts:name' \
-		--datetime 'Date de modification' \
-		--datetime 'Date de mise à jour' \
+		--primary-key 'Nid' \
+		--datetime 'Date de Dernière modification' \
+		--datetime 'Date de publication' \
 		--datetime-format '%d/%m/%Y %H:%M:%S' \
 		'$(csv-file)' $(DATABASE_NAME)
 
