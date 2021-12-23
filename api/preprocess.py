@@ -63,7 +63,7 @@ def main(file_name: str) -> None:
         fieldnames = [
             fieldname for fieldname in fieldnames if fieldname not in columns_to_remove
         ]
-        writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames)
+        writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader()
         for row in reader:
             row = transform_row(row, columns_to_remove)
