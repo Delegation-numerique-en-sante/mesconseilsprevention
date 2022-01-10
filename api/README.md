@@ -9,7 +9,7 @@
 
 ## Run
 
-1. Transform the source: `make preprocess csv-file=path/to/file.csv > transformed.csv`
+1. Transform the source: `make preprocess xlsx-file=path/to/file.xlsx > transformed.csv`
 2. Run the database creation command: `make load csv-file=transformed.csv`
 3. Run the datasette server against it: `make serve`
 4. Open http://127.0.0.1:8001
