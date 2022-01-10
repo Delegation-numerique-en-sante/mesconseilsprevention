@@ -73,7 +73,7 @@ def union(sets: Iterable[Set]) -> Set:
 
 
 def extract_sex(text: str) -> Set[str]:
-    match = re.search(r"\b([Ff]emmes?|adolescentes)\b", text)
+    match = re.search(r"\b([Ff]emmes?|adolescentes|grossesse)\b", text)
     if match:
         return {"femmes"}
     match = re.search(r"\b([Hh]ommes?|adolescents)", text)
