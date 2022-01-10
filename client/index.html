@@ -39,7 +39,7 @@
                 'articles-loader',
                 class extends Controller {
                     static targets = ['articles', 'template']
-                    static values = { url: String, age: Number }
+                    static values = { url: String, age: Number, sexe: String }
 
                     #extractTags(data) {
                         const ageRanges = data["Séquence de vie"]
@@ -70,17 +70,18 @@
                         })
                     }
 
-                    #buildURL(url, age) {
+                    #buildURL(url, age, sexe) {
                         const parsedURL = new URL(url)
                         let searchParams = new URLSearchParams(parsedURL.search)
                         searchParams.set('Age_max__gte', age)
                         searchParams.set('Age_min__lte', age)
+                        searchParams.set('Sexe__arraycontains', sexe)
                         parsedURL.search = searchParams.toString()
                         return parsedURL
                     }
 
                     load() {
-                        const url = this.#buildURL(this.urlValue, this.ageValue)
+                        const url = this.#buildURL(this.urlValue, this.ageValue, this.sexeValue)
                         fetch(url)
                             .then((response) => response.json())
                             .then((json) => {
@@ -114,11 +115,13 @@
                         const data = new FormData(this.formTarget)
                         const responses = Object.fromEntries(data)
                         this.element.dataset.articlesLoaderAgeValue = responses.age
+                        this.element.dataset.articlesLoaderSexeValue = responses.sexe
                         this.dispatch('updated')
                     }
 
                     reset(event) {
                         this.element.removeAttribute('data-articles-loader-age-value')
+                        this.element.removeAttribute('data-articles-loader-sexe-value')
                         this.dispatch('updated')
                     }
                 }
@@ -136,6 +139,14 @@
         >
             <h2>Quelques renseignements pour personnaliser vos conseils prévention</h2>
             <form data-filters-target="form">
+                <fieldset>
+                    <label for="sexe">
+                        Quel est votre sexe?
+                    </label>
+                    <br />
+                    <label><input type="radio" name="sexe" value="femmes">Femme</label>
+                    <label><input type="radio" name="sexe" value="hommes">Homme</label>
+                </fieldset>
                 <fieldset>
                     <label for="age">
                         Quel est votre âge ?
