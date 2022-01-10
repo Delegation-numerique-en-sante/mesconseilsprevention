@@ -1,8 +1,12 @@
 import re
 import sys
-from typing import List, Optional, TextIO, Tuple
+from typing import List, Optional, TextIO, Tuple, Union
 
 import pandas
+from pandas._libs.missing import NAType
+
+
+IntOrNA = Union[int, NAType]
 
 
 def rewrite_canonical_url(canonical_url: str) -> str:
@@ -13,7 +17,7 @@ def transform_list(data: List[str]) -> str:
     return "[" + ",".join(f'"{cis}"' for cis in data) + "]"
 
 
-def extract_age_range(item: str) -> Tuple[Optional[int], Optional[int]]:
+def extract_age_range(item: str) -> Tuple[IntOrNA, IntOrNA]:
     if not item:
         return (pandas.NA, pandas.NA)
 
@@ -36,13 +40,18 @@ def extract_age_range(item: str) -> Tuple[Optional[int], Optional[int]]:
     raise ValueError(item)
 
 
-def extract_age_facets(data: List[str]) -> Tuple[Optional[int], Optional[int]]:
+def extract_age_facets(data: List[str]) -> Tuple[IntOrNA, IntOrNA]:
     all_ages = [extract_age_range(item) for item in data]
+
     min_ages = [min_age for min_age, _ in all_ages]
+    min_min_ages = min(age for age in min_ages if age is not pandas.NA)
+
     max_ages = [max_age for _, max_age in all_ages]
+    max_max_ages = max(age for age in max_ages if age is not pandas.NA)
+
     return (
-        pandas.NA if any(age is pandas.NA for age in min_ages) else min(min_ages),
-        pandas.NA if any(age is pandas.NA for age in max_ages) else max(max_ages),
+        pandas.NA if any(age is pandas.NA for age in min_ages) else min_min_ages,
+        pandas.NA if any(age is pandas.NA for age in max_ages) else max_max_ages,
     )
 
 
