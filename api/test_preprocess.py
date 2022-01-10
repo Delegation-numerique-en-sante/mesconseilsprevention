@@ -21,11 +21,11 @@ def test_transform_list():
     )
 
 
-def test_extract_ages():
-    from preprocess import extract_ages
+def test_extract_age_facets():
+    from preprocess import extract_age_facets
 
     assert (
-        extract_ages(
+        extract_age_facets(
             [
                 "La santé des adolescents (11 à 17 ans)",
                 "La santé des jeunes adultes (18 à 35 ans)",

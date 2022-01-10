@@ -36,7 +36,7 @@ def extract_age_range(item: str) -> Tuple[Optional[int], Optional[int]]:
     raise ValueError(item)
 
 
-def extract_ages(data: List[str]) -> Tuple[Optional[int], Optional[int]]:
+def extract_age_facets(data: List[str]) -> Tuple[Optional[int], Optional[int]]:
     all_ages = [extract_age_range(item) for item in data]
     min_ages = [min_age for min_age, _ in all_ages]
     max_ages = [max_age for _, max_age in all_ages]
@@ -61,7 +61,7 @@ def transform_dataframe(
         cis_list = df["Séquence de vie"].str.split(", ")
         df["Séquence de vie"] = cis_list.apply(transform_list)
         df[["Age_min", "Age_max"]] = (
-            cis_list.apply(extract_ages)
+            cis_list.apply(extract_age_facets)
             .apply(pandas.Series)
             .astype(dtype=pandas.Int64Dtype())
         )
