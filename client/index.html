@@ -42,7 +42,7 @@
                     static values = { url: String, age: Number, sexe: String }
 
                     #extractTags(data) {
-                        const ageRanges = data["Séquence de vie"]
+                        const ageRanges = data['Séquence de vie']
                             .replaceAll('"', '')
                             .slice(1, -1)
                             .split(',')
@@ -81,7 +81,11 @@
                     }
 
                     load() {
-                        const url = this.#buildURL(this.urlValue, this.ageValue, this.sexeValue)
+                        const url = this.#buildURL(
+                            this.urlValue,
+                            this.ageValue,
+                            this.sexeValue
+                        )
                         fetch(url)
                             .then((response) => response.json())
                             .then((json) => {
@@ -144,8 +148,12 @@
                         Quel est votre sexe?
                     </label>
                     <br />
-                    <label><input type="radio" name="sexe" value="femmes">Femme</label>
-                    <label><input type="radio" name="sexe" value="hommes">Homme</label>
+                    <label
+                        ><input type="radio" name="sexe" value="femmes" />Femme</label
+                    >
+                    <label
+                        ><input type="radio" name="sexe" value="hommes" />Homme</label
+                    >
                 </fieldset>
                 <fieldset>
                     <label for="age">
