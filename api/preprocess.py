@@ -94,14 +94,14 @@ def transform_dataframe(
         df["Canonical URL"] = df["Canonical URL"].apply(rewrite_canonical_url)
 
     if "Séquence de vie" in df.columns:
-        cis_list = df["Séquence de vie"].str.split(", ")
-        df["Séquence de vie"] = cis_list.apply(format_list)
+        sdv_list = df["Séquence de vie"].str.split(", ")
+        df["Séquence de vie"] = sdv_list.apply(format_list)
         df[["Age_min", "Age_max"]] = (
-            cis_list.apply(extract_age_facets)
+            sdv_list.apply(extract_age_facets)
             .apply(pandas.Series)
             .astype(dtype=pandas.Int64Dtype())
         )
-        df["Sexe"] = cis_list.apply(extract_sex_facet).apply(pandas.Series)
+        df["Sexe"] = sdv_list.apply(extract_sex_facet).apply(pandas.Series)
 
     return df
 
