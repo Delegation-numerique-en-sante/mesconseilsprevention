@@ -17,6 +17,10 @@
                 color: var(--text) !important;
                 background: none;
             }
+            /* Reduce the size of `Séquences de vie` buttons/tags. */
+            nav details button {
+                font-size: .8rem;
+            }
         </style>
         <script type="module">
             import { Application, Controller } from './stimulus.js'
@@ -39,10 +43,10 @@
                 'articles-loader',
                 class extends Controller {
                     static targets = ['articles', 'template']
-                    static values = { url: String, age: Number }
+                    static values = { url: String, age: Number, sexe: String }
 
                     #extractTags(data) {
-                        const ageRanges = data["Centres d'intérêt santé"]
+                        const ageRanges = data['Séquence de vie']
                             .replaceAll('"', '')
                             .slice(1, -1)
                             .split(',')
@@ -54,7 +58,7 @@
                     }
 
                     #formatDate(data) {
-                        const majDate = new Date(data['Date de mise à jour'])
+                        const majDate = new Date(data['Date de publication'])
                         return `<time>${majDate.toLocaleDateString()}</time>`
                     }
 
@@ -62,7 +66,7 @@
                         return parseStringTemplate(templateContent, {
                             title: data.Titre,
                             url: data['Canonical URL'],
-                            summary: data.Chapô,
+                            summary: data.TLDR || data.Chapô,
                             date: this.#formatDate(data),
                             source: data.Source,
                             body: data.Corps,
@@ -70,17 +74,22 @@
                         })
                     }
 
-                    #buildURL(url, age) {
+                    #buildURL(url, age, sexe) {
                         const parsedURL = new URL(url)
                         let searchParams = new URLSearchParams(parsedURL.search)
                         searchParams.set('Age_max__gte', age)
                         searchParams.set('Age_min__lte', age)
+                        searchParams.set('Sexe__arraycontains', sexe)
                         parsedURL.search = searchParams.toString()
                         return parsedURL
                     }
 
                     load() {
-                        const url = this.#buildURL(this.urlValue, this.ageValue)
+                        const url = this.#buildURL(
+                            this.urlValue,
+                            this.ageValue,
+                            this.sexeValue
+                        )
                         fetch(url)
                             .then((response) => response.json())
                             .then((json) => {
@@ -114,11 +123,13 @@
                         const data = new FormData(this.formTarget)
                         const responses = Object.fromEntries(data)
                         this.element.dataset.articlesLoaderAgeValue = responses.age
+                        this.element.dataset.articlesLoaderSexeValue = responses.sexe
                         this.dispatch('updated')
                     }
 
                     reset(event) {
                         this.element.removeAttribute('data-articles-loader-age-value')
+                        this.element.removeAttribute('data-articles-loader-sexe-value')
                         this.dispatch('updated')
                     }
                 }
@@ -131,11 +142,20 @@
         </header>
         <main
             data-controller="articles-loader filters"
-            data-articles-loader-url-value="http://127.0.0.1:8001/SanteFr/Articles.json?_labels=on"
+            data-articles-loader-url-value="http://127.0.0.1:8001/SanteFr/Articles.json?_shape=objects&_labels=on"
             data-action="filters:updated->articles-loader#load"
         >
             <h2>Quelques renseignements pour personnaliser vos conseils prévention</h2>
             <form data-filters-target="form">
+                <fieldset>
+                    <legend>Quel est votre sexe ?</legend>
+                    <label
+                        ><input type="radio" name="sexe" value="femmes" />Femme</label
+                    >
+                    <label
+                        ><input type="radio" name="sexe" value="hommes" />Homme</label
+                    >
+                </fieldset>
                 <fieldset>
                     <label for="age">
                         Quel est votre âge ?
@@ -160,7 +180,12 @@
                             </small>
                         </em>
                     </p>
-                    <nav>${tags}</nav>
+                    <nav>
+                        <details>
+                            <summary>Séquence(s) de vie</summary>
+                            ${tags}
+                        </details>
+                    </nav>
                     <p>${summary}</p>
                     <nav>
                         <a href="${url}">Voir l’article sur santé.fr →</a>
