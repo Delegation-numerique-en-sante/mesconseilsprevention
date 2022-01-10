@@ -62,7 +62,7 @@
                         return parseStringTemplate(templateContent, {
                             title: data.Titre,
                             url: data['Canonical URL'],
-                            summary: data.Chapô,
+                            summary: data.TLDR || data.Chapô,
                             date: this.#formatDate(data),
                             source: data.Source,
                             body: data.Corps,
