@@ -1,6 +1,8 @@
+import operator
 import re
 import sys
-from typing import List, Optional, TextIO, Tuple, Union
+from functools import reduce
+from typing import Iterable, List, Optional, Set, TextIO, Tuple, Union
 
 import pandas
 from pandas._libs.missing import NAType
@@ -55,6 +57,24 @@ def extract_age_facets(data: List[str]) -> Tuple[IntOrNA, IntOrNA]:
     )
 
 
+def extract_sex_facet(data: List[str]) -> str:
+    return ",".join(sorted(union(extract_sex(label) for label in data)))
+
+
+def union(sets: Iterable[Set]) -> Set:
+    return reduce(operator.or_, sets, set())
+
+
+def extract_sex(text: str) -> Set[str]:
+    match = re.search(r"\b([Ff]emmes?|adolescentes)\b", text)
+    if match:
+        return {"femmes"}
+    match = re.search(r"\b([Hh]ommes?|adolescents)", text)
+    if match:
+        return {"hommes"}
+    return {"femmes", "hommes"}
+
+
 def transform_dataframe(
     df: pandas.DataFrame, columns_to_remove: Optional[List[str]] = None
 ) -> pandas.DataFrame:
@@ -74,6 +94,7 @@ def transform_dataframe(
             .apply(pandas.Series)
             .astype(dtype=pandas.Int64Dtype())
         )
+        df["Sexe"] = cis_list.apply(extract_sex_facet).apply(pandas.Series)
 
     return df
 
