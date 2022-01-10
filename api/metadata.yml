@@ -16,3 +16,4 @@ databases:
         plugins:
           datasette-render-html:
             columns: ["Chapô"]
+extra_css_urls: ["/assets/styles.css"]
