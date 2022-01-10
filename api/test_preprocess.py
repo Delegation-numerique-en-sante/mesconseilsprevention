@@ -3,10 +3,10 @@ import pandas
 import pytest
 
 
-def test_transform_list():
-    from preprocess import transform_list
+def test_format_list():
+    from preprocess import format_list
 
-    assert transform_list(
+    assert format_list(
         [
             "La santé des adolescents (11 à 17 ans)",
             "La santé des jeunes adultes (18 à 35 ans)",
@@ -140,7 +140,7 @@ def test_transform_dataframe():
                 "Canonical URL": "https://www.sante.fr/endometriose-1",
                 "Age_min": 11,
                 "Age_max": 55,
-                "Sexe": "femmes,hommes",
+                "Sexe": '["femmes","hommes"]',
             }
         ]
     )
@@ -179,7 +179,7 @@ def test_transform_dataframe_with_removed_columns():
                 ),
                 "Age_min": 11,
                 "Age_max": 55,
-                "Sexe": "femmes,hommes",
+                "Sexe": '["femmes","hommes"]',
             }
         ],
     )

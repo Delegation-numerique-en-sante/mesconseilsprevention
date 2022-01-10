@@ -15,8 +15,8 @@ def rewrite_canonical_url(canonical_url: str) -> str:
     return canonical_url.replace("santefr.production.asipsante.fr", "www.sante.fr")
 
 
-def transform_list(data: List[str]) -> str:
-    return "[" + ",".join(f'"{cis}"' for cis in data) + "]"
+def format_list(data: Iterable[str]) -> str:
+    return "[" + ",".join(f'"{item}"' for item in data) + "]"
 
 
 def extract_age_range(item: str) -> Tuple[IntOrNA, IntOrNA]:
@@ -46,19 +46,26 @@ def extract_age_facets(data: List[str]) -> Tuple[IntOrNA, IntOrNA]:
     all_ages = [extract_age_range(item) for item in data]
 
     min_ages = [min_age for min_age, _ in all_ages]
-    min_min_ages = min(age for age in min_ages if age is not pandas.NA)
+    numeric_min_ages = [age for age in min_ages if age is not pandas.NA]
+    min_min_age = (
+        pandas.NA
+        if any(age is pandas.NA for age in min_ages)
+        else min(numeric_min_ages)
+    )
 
     max_ages = [max_age for _, max_age in all_ages]
-    max_max_ages = max(age for age in max_ages if age is not pandas.NA)
-
-    return (
-        pandas.NA if any(age is pandas.NA for age in min_ages) else min_min_ages,
-        pandas.NA if any(age is pandas.NA for age in max_ages) else max_max_ages,
+    numeric_max_ages = [age for age in max_ages if age is not pandas.NA]
+    max_max_age = (
+        pandas.NA
+        if any(age is pandas.NA for age in max_ages)
+        else max(numeric_max_ages)
     )
+
+    return (min_min_age, max_max_age)
 
 
 def extract_sex_facet(data: List[str]) -> str:
-    return ",".join(sorted(union(extract_sex(label) for label in data)))
+    return format_list(sorted(union(extract_sex(label) for label in data)))
 
 
 def union(sets: Iterable[Set]) -> Set:
@@ -88,7 +95,7 @@ def transform_dataframe(
 
     if "Séquence de vie" in df.columns:
         cis_list = df["Séquence de vie"].str.split(", ")
-        df["Séquence de vie"] = cis_list.apply(transform_list)
+        df["Séquence de vie"] = cis_list.apply(format_list)
         df[["Age_min", "Age_max"]] = (
             cis_list.apply(extract_age_facets)
             .apply(pandas.Series)
