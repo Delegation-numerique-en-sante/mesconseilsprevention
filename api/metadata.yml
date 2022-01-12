@@ -7,6 +7,8 @@ databases:
       datasette-mask-columns:
         Articles: ["Corps"]
     tables:
+      Statuts:
+        hidden: true
       Auteurs:
         hidden: true
       Articles:
