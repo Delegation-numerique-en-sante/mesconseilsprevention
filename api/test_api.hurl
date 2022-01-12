@@ -30,3 +30,11 @@ Age_min__lte: 66
 HTTP/1.1 200
 [Asserts]
 jsonpath "$.rows" count == 54
+
+# We should only retrieve entries related to grossesse.
+GET http://127.0.0.1:8001/SanteFr/Articles.json
+[QueryStringParams]
+Grossesse: 1
+HTTP/1.1 200
+[Asserts]
+jsonpath "$.rows" count == 32

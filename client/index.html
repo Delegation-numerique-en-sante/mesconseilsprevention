@@ -43,7 +43,12 @@
                 'articles-loader',
                 class extends Controller {
                     static targets = ['articles', 'template']
-                    static values = { url: String, age: Number, sexe: String }
+                    static values = {
+                        url: String,
+                        age: Number,
+                        sexe: String,
+                        grossesse: Boolean,
+                    }
 
                     #extractTags(data) {
                         const ageRanges = data['Séquence de vie']
@@ -74,12 +79,17 @@
                         })
                     }
 
-                    #buildURL(url, age, sexe) {
+                    #buildURL(url, age, sexe, grossesse) {
                         const parsedURL = new URL(url)
                         let searchParams = new URLSearchParams(parsedURL.search)
                         searchParams.set('Age_max__gte', age)
                         searchParams.set('Age_min__lte', age)
-                        searchParams.set('Sexe__arraycontains', sexe)
+                        if (sexe !== 'undefined') {
+                            searchParams.set('Sexe__arraycontains', sexe)
+                        }
+                        if (grossesse) {
+                            searchParams.set('Grossesse', 1)
+                        }
                         parsedURL.search = searchParams.toString()
                         return parsedURL
                     }
@@ -88,7 +98,8 @@
                         const url = this.#buildURL(
                             this.urlValue,
                             this.ageValue,
-                            this.sexeValue
+                            this.sexeValue,
+                            this.grossesseValue
                         )
                         fetch(url)
                             .then((response) => response.json())
@@ -124,12 +135,17 @@
                         const responses = Object.fromEntries(data)
                         this.element.dataset.articlesLoaderAgeValue = responses.age
                         this.element.dataset.articlesLoaderSexeValue = responses.sexe
+                        this.element.dataset.articlesLoaderGrossesseValue =
+                            responses.grossesse
                         this.dispatch('updated')
                     }
 
                     reset(event) {
                         this.element.removeAttribute('data-articles-loader-age-value')
                         this.element.removeAttribute('data-articles-loader-sexe-value')
+                        this.element.removeAttribute(
+                            'data-articles-loader-grossesse-value'
+                        )
                         this.dispatch('updated')
                     }
                 }
@@ -155,6 +171,11 @@
                     <label
                         ><input type="radio" name="sexe" value="hommes" />Homme</label
                     >
+                </fieldset>
+                <fieldset>
+                    <legend>Êtes-vous enceinte ?</legend>
+                    <label><input type="radio" name="grossesse" value="1" />Oui</label>
+                    <label><input type="radio" name="grossesse" value="0" />Non</label>
                 </fieldset>
                 <fieldset>
                     <label for="age">

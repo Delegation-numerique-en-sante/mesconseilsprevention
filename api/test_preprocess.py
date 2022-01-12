@@ -149,6 +149,99 @@ def test_extract_sex(text, sex):
     assert extract_sex(text) == sex
 
 
+@pytest.mark.parametrize(
+    "text,grossesse",
+    [
+        ("Sur la santé entre 11 et 12 ans", False),
+        ("Informations pour préserver sa santé (11 - 12 ans / Femme)", False),
+        ("Informations pour préserver sa santé (13 - 14 ans / Femme)", False),
+        ("Informations pour préserver sa santé (15 - 16 ans / Femme)", False),
+        ("Informations pour préserver sa santé (17 - 18 ans / Femme)", False),
+        ("Informations pour préserver sa santé (19 - 24 ans / Femme)", False),
+        ("Informations pour préserver sa santé (25 - 35 ans / Femme)", False),
+        ("Informations pour préserver sa santé (36 - 49 ans / Femme)", False),
+        ("Informations pour préserver sa santé (50 - 54 ans / Femme)", False),
+        ("Informations pour préserver sa santé (55 - 58 ans / Femme)", False),
+        ("Informations pour préserver sa santé (59 - 64 ans / Femme)", False),
+        (
+            "Informations pour préserver sa santé à partir de 65 ans (Femmes)",
+            False,
+        ),
+        ("Sur la santé  des adolescentes entre 11 et 12 ans", False),
+        ("Sur la santé  des femmes entre 17 et 18 ans", False),
+        ("Sur la santé  des femmes entre 19 et 24 ans", False),
+        ("Sur la santé  des femmes entre 25 et 35 ans", False),
+        ("Sur la santé  des femmes entre 36 et 49 ans", False),
+        ("Sur la santé  des femmes entre 50 et 54 ans", False),
+        ("Sur la santé  des femmes entre 55 et 58 ans", False),
+        ("Sur la santé  des femmes entre 59 et 64 ans", False),
+        ("Sur la santé  des jeunes femmes entre 13 et 14 ans", False),
+        ("Sur la santé  des jeunes femmes entre 15 et 16 ans", False),
+        (
+            "Informations pour préserver sa santé  en cas de grossesse (11 - 12 ans)",
+            True,
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (13 - 14 ans)",
+            True,
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (15 - 16 ans)",
+            True,
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (17 - 18 ans)",
+            True,
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (19 - 24 ans)",
+            True,
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (25 - 35 ans)",
+            True,
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (36 - 49 ans)",
+            True,
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (50 - 54 ans)",
+            True,
+        ),
+        ("Sur la santé  entre 11 et 12 ans - en cas de grossesse", True),
+        ("Sur la santé  entre 13 et 14 ans - en cas de grossesse", True),
+        ("Sur la santé  entre 15 et 16 ans - en cas de grossesse", True),
+        ("Sur la santé  entre 17 et 18 ans - en cas de grossesse", True),
+        ("Sur la santé  entre 19 et 24 ans - en cas de grossesse", True),
+        ("Sur la santé  entre 25 et 35 ans - en cas de grossesse", True),
+        ("Sur la santé  entre 36 et 49 ans - en cas de grossesse", True),
+        ("Sur la santé  entre 50 et 54 ans - en cas de grossesse", True),
+        ("Informations pour préserver sa santé  (50 - 54 ans / Homme)", False),
+        ("Informations pour préserver sa santé  (59 - 64 ans / Homme)", False),
+        ("Informations pour préserver sa santé (11 - 12 ans / Homme)", False),
+        ("Informations pour préserver sa santé (13 - 14 ans / Homme)", False),
+        ("Informations pour préserver sa santé (15 - 16 ans / Homme)", False),
+        ("Informations pour préserver sa santé (17 - 18 ans / Homme)", False),
+        ("Informations pour préserver sa santé (19 - 24 ans / Homme)", False),
+        ("Informations pour préserver sa santé (25 - 35 ans / Homme)", False),
+        ("Informations pour préserver sa santé (36 - 49 ans / Homme)", False),
+        ("Informations pour préserver sa santé (55 - 58 ans / Homme)", False),
+        (
+            "Informations pour préserver sa santé à partir de 65 ans (Hommes)",
+            False,
+        ),
+        ("Sur la santé  des adolescents entre 11 et 12 ans", False),
+        ("Sur la santé  des jeunes hommes entre 13 et 14 ans", False),
+        ("Sur la santé des jeunes hommes entre 15 et 16 ans", False),
+    ],
+)
+def test_related_to_grossesse(text, grossesse):
+    from preprocess import related_to_grossesse
+
+    assert related_to_grossesse(text) == grossesse
+
+
 def test_rewrite_canonical_url():
     from preprocess import rewrite_canonical_url
 
@@ -189,6 +282,7 @@ def test_transform_dataframe():
                 "Age_min": 11,
                 "Age_max": 55,
                 "Sexe": '["femmes","hommes"]',
+                "Grossesse": False,
             }
         ]
     )
@@ -228,6 +322,7 @@ def test_transform_dataframe_with_removed_columns():
                 "Age_min": 11,
                 "Age_max": 55,
                 "Sexe": '["femmes","hommes"]',
+                "Grossesse": False,
             }
         ],
     )

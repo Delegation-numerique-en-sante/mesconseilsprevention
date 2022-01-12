@@ -84,6 +84,15 @@ def extract_sex(text: str) -> Set[str]:
     return {"femmes", "hommes"}
 
 
+def extract_grossesse_facet(data: List[str]) -> bool:
+    return any(related_to_grossesse(label) for label in data)
+
+
+def related_to_grossesse(text: str) -> bool:
+    match = re.search(r"\b(grossesse)\b", text)
+    return bool(match)
+
+
 def transform_dataframe(
     df: pandas.DataFrame, columns_to_remove: Optional[List[str]] = None
 ) -> pandas.DataFrame:
@@ -104,6 +113,7 @@ def transform_dataframe(
             .astype(dtype=pandas.Int64Dtype())
         )
         df["Sexe"] = sdv_list.apply(extract_sex_facet).apply(pandas.Series)
+        df["Grossesse"] = sdv_list.apply(extract_grossesse_facet).apply(pandas.Series)
 
     return df
 
