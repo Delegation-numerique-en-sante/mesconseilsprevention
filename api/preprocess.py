@@ -9,6 +9,8 @@ from pandas._libs.missing import NAType
 
 
 IntOrNA = Union[int, NAType]
+# On définit un âge maximal pour pouvoir faire des requêtes bornées.
+MAX_AGE = 999
 
 
 def rewrite_canonical_url(canonical_url: str) -> str:
@@ -29,15 +31,15 @@ def extract_age_range(item: str) -> Tuple[IntOrNA, IntOrNA]:
     if match:
         return (int(match.group("min")), int(match.group("max")))
 
-    # "Informations pour préserver sa santé à partir de 65 ans" => (65, pandas.NA)
+    # "Informations pour préserver sa santé à partir de 65 ans" => (65, MAX_AGE)
     match = re.search(r"à partir de (?P<min>\d+) ans", item)
     if match:
-        return (int(match.group("min")), pandas.NA)
+        return (int(match.group("min")), MAX_AGE)
 
-    # "'La santé des personnes âgées (85 ans et plus)'" => (65, pandas.NA)
+    # "'La santé des personnes âgées (85 ans et plus)'" => (65, MAX_AGE)
     match = re.search(r"(?P<min>\d+) ans et plus", item)
     if match:
-        return (int(match.group("min")), pandas.NA)
+        return (int(match.group("min")), MAX_AGE)
 
     raise ValueError(item)
 

@@ -1,12 +1,12 @@
-title: Un exemple avec les données Santé.fr
-description_html: |-
-  <p>On essaye d’exposer les données d’un CSV pour réutilisation externe avec cette API.</p>
+title: Prototype d’API pour les contenus de prévention de santé.fr
 databases:
   SanteFr:
     plugins:
       datasette-mask-columns:
         Articles: ["Corps"]
     tables:
+      Statuts:
+        hidden: true
       Auteurs:
         hidden: true
       Articles:
@@ -16,3 +16,4 @@ databases:
         plugins:
           datasette-render-html:
             columns: ["Chapô"]
+extra_css_urls: ["/assets/styles.css"]

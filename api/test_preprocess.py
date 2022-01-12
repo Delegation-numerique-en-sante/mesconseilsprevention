@@ -2,6 +2,8 @@ from pandas._testing import assert_frame_equal
 import pandas
 import pytest
 
+from preprocess import MAX_AGE
+
 
 def test_format_list():
     from preprocess import format_list
@@ -44,8 +46,8 @@ def test_extract_age_facets():
         ("Informations pour préserver sa santé (11 - 12 ans / Femme)", 11, 12),
         ("Informations pour préserver sa santé (59 - 64 ans)", 59, 64),
         ("Informations dédiées à la santé des nourrissons (0 - 1 an)", 0, 1),
-        ("Informations pour préserver sa santé à partir de 65 ans", 65, pandas.NA),
-        ("La santé des personnes âgées (85 ans et plus)", 85, pandas.NA),
+        ("Informations pour préserver sa santé à partir de 65 ans", 65, MAX_AGE),
+        ("La santé des personnes âgées (85 ans et plus)", 85, MAX_AGE),
     ],
 )
 def test_extract_ages_range(text, min_, max_):
@@ -68,7 +70,10 @@ def test_extract_ages_range(text, min_, max_):
         ("Informations pour préserver sa santé (50 - 54 ans / Femme)", {"femmes"}),
         ("Informations pour préserver sa santé (55 - 58 ans / Femme)", {"femmes"}),
         ("Informations pour préserver sa santé (59 - 64 ans / Femme)", {"femmes"}),
-        ("Informations pour préserver sa santé à partir de 65 ans (Femmes)", {"femmes"}),
+        (
+            "Informations pour préserver sa santé à partir de 65 ans (Femmes)",
+            {"femmes"},
+        ),
         ("Sur la santé  des adolescentes entre 11 et 12 ans", {"femmes"}),
         ("Sur la santé  des femmes entre 17 et 18 ans", {"femmes"}),
         ("Sur la santé  des femmes entre 19 et 24 ans", {"femmes"}),
@@ -79,14 +84,38 @@ def test_extract_ages_range(text, min_, max_):
         ("Sur la santé  des femmes entre 59 et 64 ans", {"femmes"}),
         ("Sur la santé  des jeunes femmes entre 13 et 14 ans", {"femmes"}),
         ("Sur la santé  des jeunes femmes entre 15 et 16 ans", {"femmes"}),
-        ("Informations pour préserver sa santé  en cas de grossesse (11 - 12 ans)", {"femmes"}),
-        ("Informations pour préserver sa santé en cas de grossesse (13 - 14 ans)", {"femmes"}),
-        ("Informations pour préserver sa santé en cas de grossesse (15 - 16 ans)", {"femmes"}),
-        ("Informations pour préserver sa santé en cas de grossesse (17 - 18 ans)", {"femmes"}),
-        ("Informations pour préserver sa santé en cas de grossesse (19 - 24 ans)", {"femmes"}),
-        ("Informations pour préserver sa santé en cas de grossesse (25 - 35 ans)", {"femmes"}),
-        ("Informations pour préserver sa santé en cas de grossesse (36 - 49 ans)", {"femmes"}),
-        ("Informations pour préserver sa santé en cas de grossesse (50 - 54 ans)", {"femmes"}),
+        (
+            "Informations pour préserver sa santé  en cas de grossesse (11 - 12 ans)",
+            {"femmes"},
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (13 - 14 ans)",
+            {"femmes"},
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (15 - 16 ans)",
+            {"femmes"},
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (17 - 18 ans)",
+            {"femmes"},
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (19 - 24 ans)",
+            {"femmes"},
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (25 - 35 ans)",
+            {"femmes"},
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (36 - 49 ans)",
+            {"femmes"},
+        ),
+        (
+            "Informations pour préserver sa santé en cas de grossesse (50 - 54 ans)",
+            {"femmes"},
+        ),
         ("Sur la santé  entre 11 et 12 ans - en cas de grossesse", {"femmes"}),
         ("Sur la santé  entre 13 et 14 ans - en cas de grossesse", {"femmes"}),
         ("Sur la santé  entre 15 et 16 ans - en cas de grossesse", {"femmes"}),
@@ -105,7 +134,10 @@ def test_extract_ages_range(text, min_, max_):
         ("Informations pour préserver sa santé (25 - 35 ans / Homme)", {"hommes"}),
         ("Informations pour préserver sa santé (36 - 49 ans / Homme)", {"hommes"}),
         ("Informations pour préserver sa santé (55 - 58 ans / Homme)", {"hommes"}),
-        ("Informations pour préserver sa santé à partir de 65 ans (Hommes)", {"hommes"}),
+        (
+            "Informations pour préserver sa santé à partir de 65 ans (Hommes)",
+            {"hommes"},
+        ),
         ("Sur la santé  des adolescents entre 11 et 12 ans", {"hommes"}),
         ("Sur la santé  des jeunes hommes entre 13 et 14 ans", {"hommes"}),
         ("Sur la santé des jeunes hommes entre 15 et 16 ans", {"hommes"}),

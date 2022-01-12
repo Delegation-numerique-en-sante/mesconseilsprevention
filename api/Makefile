@@ -17,7 +17,7 @@ load:  ## Load a CSV file into a SQLite database for datasette
 		'$(csv-file)' $(DATABASE_NAME)
 
 serve:  ## Run the datasette server against SQLite database
-	datasette $(DATABASE_NAME)  --metadata metadata.yml --cors
+	datasette $(DATABASE_NAME)  --metadata metadata.yml --static "assets:static-files/" --cors
 
 test-python:  ## Run Python related tests
 	pytest test_preprocess.py
