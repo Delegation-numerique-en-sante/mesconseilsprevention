@@ -10,9 +10,7 @@ databases:
       Auteurs:
         hidden: true
       Articles:
-        facets: ["Région"]
-        # Not recognized yet, see https://github.com/simonw/datasette/issues/1552
-        facets_array: ["Séquence de vie"]
+        facets: ["Région", {"array": "Séquence de vie"}]
         plugins:
           datasette-render-html:
             columns: ["Chapô"]
