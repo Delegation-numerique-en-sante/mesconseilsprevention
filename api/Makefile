@@ -28,7 +28,7 @@ test-api:  ## Run API related tests
 test: test-python test-api  ## Run all tests
 
 check:  ## Check source code types
-	mypy preprocess.py
+	mypy --ignore-missing-imports preprocess.py
 
 .PHONY: preprocess load serve test test-python test-api check
 
