@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <title>Un exemple avec les données Santé.fr</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+        <link rel="stylesheet" href="assets/simple.css" />
+        <style type="text/css">
+            /* Required to fight against display: inline-block. */
+            nav a[hidden] {
+                display: none;
+            }
+            /* Remove the accent background color for the reset input. */
+            button[type='reset'] {
+                border: 1px solid var(--border);
+                color: var(--text) !important;
+                background: none;
+            }
+            /* Reduce the size of `Séquences de vie` buttons/tags. */
+            nav details button {
+                font-size: 0.8rem;
+            }
+        </style>
+        <script src="assets/turbo.js"></script>
+        <script>
+            Turbo.session.drive = false
+        </script>
+        <script type="module">
+            import { Application, Controller } from './assets/stimulus.js'
+            window.Stimulus = Application.start()
+            window.Stimulus.debug = true
+            Stimulus.register(
+                'foo',
+                class extends Controller {
+                    static targets = ['frame']
+                    lol(e) {
+                        e.preventDefault()
+                        const form = e.target
+                        this.frameTarget.src = `profile/${form.sexe.value}/${form.age.value}/`
+                    }
+                    reset(e) {
+                        this.frameTarget.src = ''
+                    }
+                }
+            )
+        </script>
+    </head>
+    <body>
+        <header>
+            <h1>Un exemple avec les données Santé.fr</h1>
+        </header>
+        <main data-controller="foo">
+            <h2>Quelques renseignements pour personnaliser vos conseils prévention</h2>
+            <form data-action="foo#lol reset->foo#reset">
+                <fieldset>
+                    <label for="age">
+                        Quel est votre âge ?
+                        <em><small>(Chiffre requis, par exemple : 42)</small></em>
+                    </label>
+                    <br />
+                    <input type="number" min="0" step="1" required name="age" />
+                </fieldset>
+                <fieldset>
+                    <legend>Quel est votre sexe ?</legend>
+                    <label>
+                        <input type="radio" name="sexe" value="femmes" />Femme
+                    </label>
+                    <label>
+                        <input type="radio" name="sexe" value="hommes" />Homme
+                    </label>
+                </fieldset>
+                <button type="submit">Soumettre</button>
+                <button type="reset">Reset</button>
+            </form>
+            <turbo-frame id="results" data-foo-target="frame"></turbo-frame>
+        </main>
+        <footer>
+            <p>Données issues de <a href="https://www.sante.fr/">Santé.fr</a>.</p>
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,36 @@
+---
+pagination:
+    data: profiles
+    size: 1
+    alias: profile
+permalink: 'profile/{{ profile.sexe }}/{{ profile.age }}/'
+---
+
+<turbo-frame id="results">
+{% for article in profile.data.rows %}
+<article>
+    <h3>
+        <a href="{{ article["Canonical URL"] }}">{{ article.Titre }}</a>
+    </h3>
+    <p>
+        <em>
+            <small>
+                Mise à jour le : {{ article.date }}, source : {{ article.source }}
+                {# TODO: Format data #}
+            </small>
+        </em>
+    </p>
+    <nav>
+        <details>
+            <summary>Séquence(s) de vie</summary>
+            {# TODO: Format ${tags} #}
+        </details>
+    </nav>
+    {# <p>article.TLDR  data["Chapôsummary"]</p> #}
+    <nav>
+        <a href="{{ article["Canonical URL"] }}">Voir l’article sur santé.fr →</a>
+    </nav>
+</article>
+{% endfor %}
+
+</turbo-frame>
