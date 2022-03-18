@@ -24,16 +24,16 @@ py==1.11.0
     # via pytest
 pyparsing==3.0.6
     # via packaging
-pytest==6.2.5
+pytest==7.1.1
     # via
     #   -r requirements-dev.in
     #   pytest-watch
 pytest-watch==4.2.0
     # via -r requirements-dev.in
-toml==0.10.2
-    # via pytest
 tomli==2.0.0
-    # via mypy
+    # via
+    #   mypy
+    #   pytest
 typing-extensions==4.0.1
     # via mypy
 watchdog==2.1.6
