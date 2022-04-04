@@ -71,8 +71,7 @@
                         return parseStringTemplate(templateContent, {
                             title: data.Titre,
                             url: data['Canonical URL'],
-                            summary: data.TLDR || data.Chapô,
-                            date: this.#formatDate(data),
+                            summary: data['TLDR; (exemples : à finaliser si intéressant in fine)'] || data.Chapô,
                             source: data.Source,
                             body: data.Corps,
                             tags: this.#extractTags(data),
@@ -197,7 +196,7 @@
                     <p>
                         <em>
                             <small>
-                                Mise à jour le : ${date}, source : ${source}
+                                Source : ${source}
                             </small>
                         </em>
                     </p>

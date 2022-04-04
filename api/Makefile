@@ -10,9 +10,7 @@ load:  ## Load a CSV file into a SQLite database for datasette
 	csvs-to-sqlite \
 		--table 'Articles' \
 		--replace-tables \
-		--primary-key 'Nid' \
-		--datetime 'Date de Dernière modification' \
-		--datetime 'Date de publication' \
+		--primary-key 'ID proprietaire Santé.fr' \
 		--datetime-format '%d/%m/%Y %H:%M:%S' \
 		'$(csv-file)' $(DATABASE_NAME)
 

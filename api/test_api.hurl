@@ -11,7 +11,7 @@ Age_max__gte: 39
 Age_min__lte: 39
 HTTP/1.1 200
 [Asserts]
-jsonpath "$.rows" count == 89
+jsonpath "$.rows" count == 85
 
 # We should retrieve entries if age is 11.
 GET http://127.0.0.1:8001/SanteFr/Articles.json
@@ -20,7 +20,7 @@ Age_max__gte: 10
 Age_min__lte: 10
 HTTP/1.1 200
 [Asserts]
-jsonpath "$.rows" count == 36
+jsonpath "$.rows" count == 35
 
 # We should retrieve entries if age is above 65.
 GET http://127.0.0.1:8001/SanteFr/Articles.json
@@ -29,7 +29,7 @@ Age_max__gte: 66
 Age_min__lte: 66
 HTTP/1.1 200
 [Asserts]
-jsonpath "$.rows" count == 54
+jsonpath "$.rows" count == 51
 
 # We should only retrieve entries related to grossesse.
 GET http://127.0.0.1:8001/SanteFr/Articles.json
@@ -37,4 +37,4 @@ GET http://127.0.0.1:8001/SanteFr/Articles.json
 Grossesse: 1
 HTTP/1.1 200
 [Asserts]
-jsonpath "$.rows" count == 32
+jsonpath "$.rows" count == 31

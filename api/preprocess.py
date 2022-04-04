@@ -13,10 +13,6 @@ IntOrNA = Union[int, NAType]
 MAX_AGE = 999
 
 
-def rewrite_canonical_url(canonical_url: str) -> str:
-    return canonical_url.replace("santefr.production.asipsante.fr", "www.sante.fr")
-
-
 def format_list(data: Iterable[str]) -> str:
     return "[" + ",".join(f'"{item}"' for item in data) + "]"
 
@@ -93,17 +89,8 @@ def related_to_grossesse(text: str) -> bool:
     return bool(match)
 
 
-def transform_dataframe(
-    df: pandas.DataFrame, columns_to_remove: Optional[List[str]] = None
-) -> pandas.DataFrame:
+def transform_dataframe(df: pandas.DataFrame) -> pandas.DataFrame:
     df = df.copy()
-
-    if columns_to_remove:
-        df = df.drop(columns_to_remove, axis=1, errors="ignore")
-
-    if "Canonical URL" in df.columns:
-        df["Canonical URL"] = df["Canonical URL"].apply(rewrite_canonical_url)
-
     if "Séquence de vie" in df.columns:
         sdv_list = df["Séquence de vie"].str.split(", ")
         df["Séquence de vie"] = sdv_list.apply(format_list)
@@ -118,19 +105,10 @@ def transform_dataframe(
     return df
 
 
-COLUMNS_TO_REMOVE = [
-    "Auteur courrier",
-    "Auteur",
-    "A retrouver sur",
-    "Afficher dans le Bloc de tags associés",
-    "Fuseau horaire",
-]
-
-
 def preprocess_excel(input_filename: str, output_file: TextIO) -> None:
     df = pandas.read_excel(input_filename).fillna("")
-    df.rename(columns={"Unnamed: 1": "Canonical URL"}, inplace=True)
-    df = transform_dataframe(df, COLUMNS_TO_REMOVE)
+    df.rename(columns={"Unnamed: 10": "Canonical URL"}, inplace=True)
+    df = transform_dataframe(df)
     df.to_csv(output_file, header=True, index=False)
 
 
