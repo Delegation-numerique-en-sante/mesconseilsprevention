@@ -17,9 +17,13 @@
                 color: var(--text) !important;
                 background: none;
             }
-            /* Reduce the size of `Séquences de vie` buttons/tags. */
-            nav details button {
+            nav {
+                padding: 0;
+            }
+            /* Reduce the size of `Catégories`. */
+            nav a {
                 font-size: 0.8rem;
+                margin: 0;
             }
         </style>
         <script type="module">
@@ -50,16 +54,16 @@
                         grossesse: Boolean,
                     }
 
-                    #extractTags(data) {
-                        const ageRanges = data['Séquence de vie']
+                    #extractCategories(data) {
+                        const categories = data['Catégories']
                             .replaceAll('"', '')
                             .slice(1, -1)
                             .split(',')
-                        let ages = ''
-                        for (const ageRange of ageRanges) {
-                            ages += `<button>${ageRange}</button> `
+                        let cats = ''
+                        for (const categorie of categories) {
+                            cats += `<a>${categorie}</a> `
                         }
-                        return ages
+                        return cats
                     }
 
                     #formatDate(data) {
@@ -71,10 +75,10 @@
                         return parseStringTemplate(templateContent, {
                             title: data.Titre,
                             url: data['Canonical URL'],
-                            summary: data['TLDR; (exemples : à finaliser si intéressant in fine)'] || data.Chapô,
+                            summary: data.TLDR || data.Chapô,
                             source: data.Source,
                             body: data.Corps,
-                            tags: this.#extractTags(data),
+                            categories: this.#extractCategories(data),
                         })
                     }
 
@@ -201,15 +205,10 @@
                         </em>
                     </p>
                     <nav>
-                        <details>
-                            <summary>Séquence(s) de vie</summary>
-                            ${tags}
-                        </details>
+                        ${categories}
                     </nav>
                     <p>${summary}</p>
-                    <nav>
-                        <a href="${url}">Voir l’article sur santé.fr →</a>
-                    </nav>
+                    <a href="${url}"><button>Voir l’article sur santé.fr →</button></a>
                 </article>
             </template>
         </main>

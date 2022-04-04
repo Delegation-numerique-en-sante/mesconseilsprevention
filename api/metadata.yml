@@ -10,7 +10,7 @@ databases:
       Auteurs:
         hidden: true
       Articles:
-        facets: [{"array": "Sexe"}, "Grossesse", "Source", {"array": "Séquence de vie"}]
+        facets: [{"array": "Sexe"}, "Grossesse", "Source", {"array": "Séquence de vie"}, {"array": "Catégories"}]
         plugins:
           datasette-render-html:
             columns: ["Chapô"]

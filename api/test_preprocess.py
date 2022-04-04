@@ -38,6 +38,24 @@ def test_extract_age_facets():
     )
 
 
+def test_extract_categories():
+    from preprocess import extract_categories
+
+    assert extract_categories(
+        {
+            "Nouvelle cat 1": "Bien manger et bouger",
+            "Nouvelle cat 2 ": "Grossesse et 1000 premiers jours",
+            "Nouvelle cat 3": "Vaccination et dépistage",
+            "Nouvelle cat 4": "Santé et environnement",
+        }
+    ) == [
+        "Bien manger et bouger",
+        "Grossesse et 1000 premiers jours",
+        "Vaccination et dépistage",
+        "Santé et environnement",
+    ]
+
+
 @pytest.mark.parametrize(
     "text,min_,max_",
     [
@@ -255,6 +273,10 @@ def test_transform_dataframe():
                         "La santé des adultes (35 à 55 ans)"
                     ),
                     "Canonical URL": "https://www.sante.fr/endometriose-1",
+                    "Nouvelle cat 1": "Maladies transmissibles",
+                    "Nouvelle cat 2 ": "Santé sexuelle",
+                    "Nouvelle cat 3": "",
+                    "Nouvelle cat 4": "",
                 }
             ]
         )
@@ -274,6 +296,7 @@ def test_transform_dataframe():
                 "Age_max": 55,
                 "Sexe": '["femmes","hommes"]',
                 "Grossesse": False,
+                "Catégories": '["Maladies transmissibles","Santé sexuelle"]',
             }
         ]
     )
