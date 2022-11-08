@@ -12,7 +12,7 @@ docopt==0.6.2
     # via pytest-watch
 iniconfig==1.1.1
     # via pytest
-mypy==0.942
+mypy==0.990
     # via -r requirements-dev.in
 mypy-extensions==0.4.3
     # via mypy
@@ -31,9 +31,7 @@ pytest==7.1.1
 pytest-watch==4.2.0
     # via -r requirements-dev.in
 tomli==2.0.1
-    # via
-    #   mypy
-    #   pytest
+    # via pytest
 typing-extensions==4.1.1
     # via mypy
 watchdog==2.1.7
